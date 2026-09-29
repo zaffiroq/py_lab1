@@ -14,7 +14,7 @@ class Token:
     kind: str
     value: float | str
 
-symbols = {"+": 1, "-": 1, "*": 2, "/": 2}
+priority = {"+": 1, "-": 1, "*": 2, "/": 2}
 
 
 def tokenization(expression:str):
@@ -98,10 +98,23 @@ def RPN(tokens):
     rpn_output = []
 
     for token in tokens:
+
         if token.kind == 'number':
             rpn_output.append(token)
+
         else:
-            while len(stack) > 0 and
+            while len(stack) > 0 and priority[stack[-1].value] >= priority[token.value]:
+                rpn_output.append(stack.pop())
+            stack.append(token)
+
+    while len(stack) > 0:
+        rpn_output.append(stack.pop())
+
+    return rpn_output
+
+def RNP_calculation(rpn_output):
+
+
 
 
 
