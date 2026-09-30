@@ -45,7 +45,7 @@ def convert(value, unit_1, unit_2):
         raise UncombinedUnitsError(unit_1,unit_2)
 
     if unit_1 not in length and unit_1 not in mass and unit_1 not in temperature:
-        raise UnknownUnitError(unit_2)
+        raise UnknownUnitError(unit_1)
     if unit_2 not in length and unit_2 not in mass and unit_2 not in temperature:
         raise UnknownUnitError(unit_2)
 
