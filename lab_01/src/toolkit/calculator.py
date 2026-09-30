@@ -5,8 +5,7 @@ MissedOperandError,
 InvalidNumberError,
 InappropriateSymbolError,
 DoubleBinaryOperandError,
-DivisionByZeroError,
-UncombinedUnitsError
+DivisionByZeroError
 )
 
 @dataclass
@@ -112,7 +111,45 @@ def RPN(tokens):
 
     return rpn_output
 
-def RNP_calculation(rpn_output):
+def evaluation(rpn_output):
+    while len(rpn_output) > 1:
+        i = 0
+        if rpn_output[i].kind == 'number':
+            i += 1
+        elif rpn_output[i].kind == 'operand':
+
+            if rpn_output[i].value == '+':
+                rpn_output[i] = Token('number', rpn_output[i-2].value + rpn_output[i-1].value)
+
+            elif rpn_output[i].value == '-':
+                rpn_output[i] = Token('number', rpn_output[i-2].value + rpn_output[i-1].value)
+
+            elif rpn_output[i].value == '*':
+                rpn_output[i] = Token('number', rpn_output[i-2].value + rpn_output[i-1].value)
+
+            elif rpn_output[i].value == '/':
+                if rpn_output[-1].value == 0:
+                    raise DivisionByZeroError()
+                else:
+                    rpn_output[i] = Token('number', rpn_output[i-2].value + rpn_output[i-1].value)
+
+
+            rpn_output.pop(i - 2)
+            rpn_output.pop(i - 2)
+
+        return rpn_output
+
+def calculate(expression):
+
+    tokens = tokenization(expression)
+    tokens = validation(tokens)
+    tokens = unary(tokens)
+    return evaluation(RPN(tokens))
+
+
+
+
+
 
 
 
