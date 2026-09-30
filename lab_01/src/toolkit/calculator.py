@@ -23,15 +23,14 @@ def tokenization(expression:str):
     n = len(expression)
 
     while i < n:
-        character = expression[i]
-        if character == ' ':
+        if expression[i] == ' ':
             i += 1
             continue
-        if character.isdigit() or character == '.':
+        if expression[i].isdigit() or expression[i] == '.':
             start = i
             dot = 0
-            while i < n and (character.isdigit() or character == '.') and dot <= 1:
-                if character == '.':
+            while i < n and (expression[i].isdigit() or expression[i] == '.') and dot <= 1:
+                if expression[i] == '.':
                     dot += 1
                     if dot > 1:
                         raise InvalidNumberError
@@ -41,13 +40,14 @@ def tokenization(expression:str):
 
             if token == '.':
                 raise InvalidNumberError
-            tokens.append(Token('number',str(token)))
+            tokens.append(Token('number', float(token)))
+            continue
 
-        if character in '+-*/':
-            tokens.append([character, 'operand'])
+        if expression[i] in '+-*/':
+            tokens.append(Token('operand', expression[i]))
             i += 1
             continue
-        if character.isdigit() == False or character not in '+-*/':
+        if expression[i].isdigit() == False or expression[i] not in '+-*/':
             raise InappropriateSymbolError
 
     if len(tokens) == 0:
@@ -63,18 +63,22 @@ def validation(tokens):
     if tokens[-1].kind != 'number':
         raise MissedOperandError()
 
-    for token_id in range(1,len(tokens)):
+    for token_id in range(1, len(tokens)):
+        prev, cur = tokens[token_id - 1], tokens[token_id]
 
-        if tokens[token_id].kind == 'number' and tokens[token_id+1].kind == 'number':
+        if prev.kind == 'number' and cur.kind == 'number':
             raise MissedOperandError()
 
-        if tokens[token_id].kind == 'operand' and tokens[token_id+1].kind == 'operand':
-            if tokens[token_id + 1].value not in '+-':
-                raise DoubleBinaryOperandError(str(tokens[token_id].value),str(tokens[token_id+1].value))
+        if prev.kind == 'operand' and cur.kind == 'operand':
 
-        if (token_id + 2) < len(tokens):
-            if tokens[token_id+2].kind != 'number':
+            if cur.value not in '+-':
+                raise DoubleBinaryOperandError(str(prev.value), str(cur.value))
+
+            nxt = tokens[token_id + 1] if token_id + 1 < len(tokens) else None
+            if nxt is None or nxt.kind != 'number':
                 raise MissedOperandError()
+
+    return tokens
 
 def unary(tokens):
     pending_sign = 1
@@ -85,7 +89,7 @@ def unary(tokens):
             if token.value == "-":
                 pending_sign *= -1
         elif token.kind == 'number':
-            result.append(Token(token.value * pending_sign,'number'))
+            result.append(Token('number', token.value * pending_sign))
             pending_sign = 1
         else:
             result.append(token)
@@ -112,32 +116,24 @@ def RPN(tokens):
     return rpn_output
 
 def evaluation(rpn_output):
-    while len(rpn_output) > 1:
-        i = 0
-        if rpn_output[i].kind == 'number':
-            i += 1
-        elif rpn_output[i].kind == 'operand':
-
-            if rpn_output[i].value == '+':
-                rpn_output[i] = Token('number', rpn_output[i-2].value + rpn_output[i-1].value)
-
-            elif rpn_output[i].value == '-':
-                rpn_output[i] = Token('number', rpn_output[i-2].value + rpn_output[i-1].value)
-
-            elif rpn_output[i].value == '*':
-                rpn_output[i] = Token('number', rpn_output[i-2].value + rpn_output[i-1].value)
-
-            elif rpn_output[i].value == '/':
-                if rpn_output[-1].value == 0:
+    stack = []
+    for token in rpn_output:
+        if token.kind == 'number':
+            stack.append(token.value)
+        else:
+            b = stack.pop()   # сначала правый операнд!
+            a = stack.pop()   # потом левый — иначе 10/4 станет 0.4
+            if token.value == "+":
+                stack.append(a + b)
+            elif token.value == "-":
+                stack.append(a - b)
+            elif token.value == "*":
+                stack.append(a * b)
+            else:
+                if b == 0:
                     raise DivisionByZeroError()
-                else:
-                    rpn_output[i] = Token('number', rpn_output[i-2].value + rpn_output[i-1].value)
-
-
-            rpn_output.pop(i - 2)
-            rpn_output.pop(i - 2)
-
-        return rpn_output
+                stack.append(a / b)
+    return stack[0]
 
 def calculate(expression):
 
@@ -145,9 +141,6 @@ def calculate(expression):
     tokens = validation(tokens)
     tokens = unary(tokens)
     return evaluation(RPN(tokens))
-
-
-
 
 
 
