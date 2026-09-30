@@ -33,13 +33,13 @@ def tokenization(expression:str):
                 if expression[i] == '.':
                     dot += 1
                     if dot > 1:
-                        raise InvalidNumberError
+                        raise InvalidNumberError(expression[start : i + 1])
                 i += 1
 
             token = expression[start:i]
 
             if token == '.':
-                raise InvalidNumberError
+                raise InvalidNumberError(token)
             tokens.append(Token('number', float(token)))
             continue
 
@@ -48,7 +48,7 @@ def tokenization(expression:str):
             i += 1
             continue
         if expression[i].isdigit() == False or expression[i] not in '+-*/':
-            raise InappropriateSymbolError
+            raise InappropriateSymbolError(expression[i])
 
     if len(tokens) == 0:
         raise EmptyExpressionError
@@ -72,7 +72,7 @@ def validation(tokens):
         if prev.kind == 'operand' and cur.kind == 'operand':
 
             if cur.value not in '+-':
-                raise DoubleBinaryOperandError(str(prev.value), str(cur.value))
+                raise DoubleBinaryOperandError(prev.value, cur.value)
 
             nxt = tokens[token_id + 1] if token_id + 1 < len(tokens) else None
             if nxt is None or nxt.kind != 'number':
@@ -116,23 +116,31 @@ def RPN(tokens):
     return rpn_output
 
 def evaluation(rpn_output):
+
     stack = []
+
     for token in rpn_output:
+
         if token.kind == 'number':
             stack.append(token.value)
+
         else:
-            b = stack.pop()   # сначала правый операнд!
-            a = stack.pop()   # потом левый — иначе 10/4 станет 0.4
+            b = stack.pop()
+            a = stack.pop()
             if token.value == "+":
                 stack.append(a + b)
+
             elif token.value == "-":
                 stack.append(a - b)
+
             elif token.value == "*":
                 stack.append(a * b)
+
             else:
                 if b == 0:
                     raise DivisionByZeroError()
                 stack.append(a / b)
+
     return stack[0]
 
 def calculate(expression):
