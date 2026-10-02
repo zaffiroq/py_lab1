@@ -1,12 +1,14 @@
 from dataclasses import dataclass
-from toolkit.errors import(
-EmptyExpressionError,
-MissedOperandError,
-InvalidNumberError,
-InappropriateSymbolError,
-DoubleBinaryOperandError,
-DivisionByZeroError
+
+from toolkit.errors import (
+    DivisionByZeroError,
+    DoubleBinaryOperandError,
+    EmptyExpressionError,
+    InappropriateSymbolError,
+    InvalidNumberError,
+    MissedOperandError,
 )
+
 
 @dataclass
 class Token:
