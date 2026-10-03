@@ -30,10 +30,10 @@ def main(argv=None):
             result = convert(args.value, args.unit_1, args.unit_2)
     except Error as error:
         print(f"error: {Error}", file=sys.stderr)
-        return None
+        return 2
 
     print(result)
-    return None
+    return 0
 
 
 if __name__ == "__main__":
