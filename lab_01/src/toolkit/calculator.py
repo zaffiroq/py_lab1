@@ -18,7 +18,7 @@ class Token:
 priority = {"+": 1, "-": 1, "*": 2, "/": 2}
 
 
-def tokenization(expression:str):
+def tokenization(expression: str) -> list[Token]:
 
     tokens = []
     i = 0
@@ -57,7 +57,7 @@ def tokenization(expression:str):
     return tokens
 
 
-def validation(tokens):
+def validation(tokens: list[Token]) -> None:
 
     if tokens[0].kind == 'operand' and tokens[0].value not in '+-':
         raise MissedOperandError()
@@ -82,7 +82,7 @@ def validation(tokens):
 
     return tokens
 
-def unary(tokens):
+def unary(tokens: list[Token]) -> list[Token]:
     pending_sign = 1
     result = []
     for token_id, token in enumerate(tokens):
@@ -98,7 +98,7 @@ def unary(tokens):
 
     return result
 
-def RPN(tokens):
+def RPN(tokens: list[Token]) -> list[Token]:
     stack = []
     rpn_output = []
 
@@ -117,7 +117,7 @@ def RPN(tokens):
 
     return rpn_output
 
-def evaluation(rpn_output):
+def evaluation(rpn_output: list[Token]) -> float:
 
     stack = []
 
@@ -145,7 +145,7 @@ def evaluation(rpn_output):
 
     return stack[0]
 
-def calculate(expression):
+def calculate(expression: str) -> float:
 
     tokens = tokenization(expression)
     tokens = validation(tokens)

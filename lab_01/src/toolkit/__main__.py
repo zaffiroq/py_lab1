@@ -19,7 +19,7 @@ convert_parser.add_argument("value", type=float, help="Числовое знач
 convert_parser.add_argument("--from", dest="unit_1", required=True, help="Исходная единица")
 convert_parser.add_argument("--to", dest="unit_2", required=True, help="Конечная единица")
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
 
@@ -28,7 +28,7 @@ def main(argv=None):
             result = calculate(args.expression)
         if args.command == "convert":
             result = convert(args.value, args.unit_1, args.unit_2)
-    except Error as error:
+    except Error:
         print(f"error: {Error}", file=sys.stderr)
         return 2
 

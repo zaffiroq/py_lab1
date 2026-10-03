@@ -5,24 +5,24 @@ from toolkit.errors import (
     UnknownUnitError,
 )
 
-length = {'mm' : 0.001, 'cm' : 0.01, 'm' : 1, 'km' : 1000}
-mass = {'g' : 0.001, 'kg' : 1}
-temperature = {'c' : [1, 0],'f' : [9/5, 32], 'k' : [1, 273.15]}
+length: dict[str, float] = {'mm' : 0.001, 'cm' : 0.01, 'm' : 1, 'km' : 1000}
+mass:dict[str, float] = {'g' : 0.001, 'kg' : 1}
+temperature: dict[str, tuple[float, float]] = {'c' : [1, 0],'f' : [9/5, 32], 'k' : [1, 273.15]}
 
-def convert_length(value, unit_1, unit_2):
+def convert_length(value:float, unit_1:str, unit_2:str) -> float:
     return float(value) * length[unit_1] / length[unit_2]
 
-def convert_mass(value, unit_1, unit_2):
+def convert_mass(value:float, unit_1:str, unit_2:str) -> float:
     return float(value) * mass[unit_1] / mass[unit_2]
 
-def convert_temperature(value, unit_1, unit_2):
+def convert_temperature(value:float, unit_1:str, unit_2:str) -> float:
     celsius = (float(value) - temperature[unit_1][1]) / temperature[unit_1][0]
     if celsius < -273.15:
         raise BelowAbsoluteZeroValueError()
     else:
         return celsius * temperature[unit_2][0] + temperature[unit_2][1]
 
-def convert(value, unit_1, unit_2):
+def convert(value:float, unit_1:str, unit_2:str) -> float:
 
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise InvalidNumberError(value)
