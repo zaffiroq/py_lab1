@@ -29,11 +29,11 @@ def main(argv=None):
         if args.command == "convert":
             result = convert(args.value, args.unit_1, args.unit_2)
     except Error as error:
-        print(f"error: {error}", file=sys.stderr)
-        return 2
+        print(f"error: {Error}", file=sys.stderr)
+        return None
 
     print(result)
-    return 0
+    return None
 
 
 if __name__ == "__main__":
